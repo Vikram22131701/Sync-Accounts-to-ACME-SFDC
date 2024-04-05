@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="implementation-retrieve-accountsFlow" doc:id="8dbaf54d-34dc-43f7-9489-534750277dc6" >
+		<http:request method="${requester.retrievemethod}" doc:name="GET: /retrieve-accounts" doc:id="ca66b173-0870-490c-b025-42d70948240c" url="${requester.retrieveUrl}">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_secret" : Mule::p('secure::requester.client_secret'),
+	"client_id" : Mule::p('secure::requester.client_id'),
+	"correlationId" :Mule::p('secure::requester.correlationId')
+}]]]></http:headers>
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"accountid": attributes.uriParams.accountid
+}]]]></http:uri-params>
+		</http:request>
+		<error-handler ref="lm-common-error-handlerError_Handler" />
+	</flow>
+</mule>

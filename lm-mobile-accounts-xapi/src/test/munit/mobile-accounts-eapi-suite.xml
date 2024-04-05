@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="mobile-accounts-eapi-suite.xml" />
+	<munit:test name="mobile-accounts-eapi-console-test" doc:id="96df5714-6bb2-4991-aef4-303667343f7f" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="feec5b7b-e894-48c6-9ea3-d3679f1ec4e0" processor="http:listener">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="/console/*" attributeName="path" />
+					<munit-tools:with-attribute whereValue="mobile-accounts-eapi-httpListenerConfig" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="96eaa993-3873-435a-af2b-9af5472bdb6b" processor="apikit:console">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="mobile-accounts-eapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="9ffe54e4-f13b-438a-93d4-ceb9ae2f22e0" >
+				<munit:payload value="#[readUrl('classpath://mobileaccountseapiconsoletest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://mobileaccountseapiconsoletest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to mobile-accounts-eapi-console" doc:id="06b3e7c6-76f6-417f-9dcf-66056deec0e2" name="mobile-accounts-eapi-console"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="39218573-8b87-40f1-84f0-8ab31fe03aaf" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import mobileaccountseapiconsoletest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="put:\accounts\(accountid):application\json:mobile-accounts-eapi-config-test" doc:id="9ebaa947-6c39-4cb2-acc0-8335f3f6d052" >
+		<munit:behavior >
+			<munit-tools:spy doc:name="Spy Flow Reference" doc:id="b60cda48-8364-4609-8eb8-e44e31dd5d73" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fd65b20f-7a81-48f2-856b-d590716049a9" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="93a63a3a-94f4-4f7e-b1d0-7cb7c365a089" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import putaccountsaccountidapplicationjsonmobileaccountseapiconfigtest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="d01669ac-3446-4a76-b71a-fc53f37a1c83" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import putaccountsaccountidapplicationjsonmobileaccountseapiconfigtest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="4c55d2a0-aa6d-44ba-af78-a0901aec8697" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://putaccountsaccountidapplicationjsonmobileaccountseapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://putaccountsaccountidapplicationjsonmobileaccountseapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeadersMapName" value="#[readUrl('classpath://putaccountsaccountidapplicationjsonmobileaccountseapiconfigtest\set-event_variable_.dwl')]" />
+					<munit:variable key="correlationId" value="#[output application/java --- readUrl('classpath://putaccountsaccountidapplicationjsonmobileaccountseapiconfigtest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to put:\accounts\(accountid):application\json:mobile-accounts-eapi-config" doc:id="9aa2238b-775b-451c-9bb0-f2d3fa8c42fe" name="put:\accounts\(accountid):application\json:mobile-accounts-eapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="5a24bb83-2d27-4b70-8613-5f97c5fde138" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import putaccountsaccountidapplicationjsonmobileaccountseapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Flow Reference" doc:id="6f47bf57-8202-442b-a8be-f552da53e2db" processor="flow-ref" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="fd65b20f-7a81-48f2-856b-d590716049a9" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="mobile-accounts-eapi-suite-error-400" doc:id="7f625de2-b0d8-4007-beae-310dcde84c98" expectedErrorType="APIKIT:BAD_REQUEST">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="1475c780-0f0c-4756-a4ec-92828fb6666c" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="mobile-accounts-eapi-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="b37ff4f9-e96c-473e-9268-0a899b96142b" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:BAD_REQUEST" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="2c9600df-94e1-4fbe-8428-c0cdc836f2ad" name="mobile-accounts-eapi-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="9abb4437-57f3-44b9-8bc2-101d80d21458" actual="#[vars.httpStatus]" expected="400"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="mobile-accounts-eapi-suite-error-404" doc:id="5f048767-96b2-4a9e-bff3-8882ccbda602" expectedErrorType="APIKIT:NOT_FOUND">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="cc43790b-07a8-46f0-9b64-61368eca3c75" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="mobile-accounts-eapi-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="b37ff4f9-e96c-473e-9268-0a899b96142b" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_FOUND" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="aaedaaaa-2bc4-4565-9d81-b0ea68d0132e" name="mobile-accounts-eapi-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="b84e6247-fbbb-4adf-be68-c5b42a99fdd7" actual="#[vars.httpStatus]" expected="404"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="mobile-accounts-eapi-suite-error-406" doc:id="b2b6ea9d-7d93-41db-9bc5-626f50d958da" expectedErrorType="APIKIT:NOT_ACCEPTABLE">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="bf38169f-43c4-4718-b4e7-3a607e669f70" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="mobile-accounts-eapi-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="b37ff4f9-e96c-473e-9268-0a899b96142b" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_ACCEPTABLE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="bbfff1df-b7ed-4d0f-a92b-f71a77591d03" name="mobile-accounts-eapi-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="36f2359b-ade6-4215-9dd0-fc1f8cf5d25f" actual="#[vars.httpStatus]" expected="406"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="mobile-accounts-eapi-suite-error-405" doc:id="3c1bc35a-66a6-4d78-af24-a2083c880a0e" expectedErrorType="APIKIT:METHOD_NOT_ALLOWED">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="963fe355-1e7e-4732-b77d-dea30f74245b" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="mobile-accounts-eapi-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="b37ff4f9-e96c-473e-9268-0a899b96142b" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:METHOD_NOT_ALLOWED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="e37db1a4-4429-4daa-bb6b-b6e5770622c7" name="mobile-accounts-eapi-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="93b7cbdb-7baa-45ed-a7c6-dd076677c112" actual="#[vars.httpStatus]" expected="405"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="mobile-accounts-eapi-suite-error-415" doc:id="a6f6d0d5-55b2-441b-af2f-00b69aaf0dac" expectedErrorType="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="317f4cf8-b37a-4c81-8ba1-a651308d3a5f" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="mobile-accounts-eapi-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="b37ff4f9-e96c-473e-9268-0a899b96142b" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:UNSUPPORTED_MEDIA_TYPE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="8f1791ec-7ff6-49f2-95d4-f28c10af405a" name="mobile-accounts-eapi-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="142ddb22-dffe-4e2a-ac9d-4a8b23d1ed5c" actual="#[vars.httpStatus]" expected="415"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="mobile-accounts-eapi-suite-error-501" doc:id="9a87d611-661a-4cc1-85d3-2535cf2e7d0f" expectedErrorType="APIKIT:NOT_IMPLEMENTED">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="0c5eaa5d-77d2-491c-8107-23d5fb6a2b1d" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="mobile-accounts-eapi-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="b37ff4f9-e96c-473e-9268-0a899b96142b" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_IMPLEMENTED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="17eaf2b3-1251-4287-a87e-3c4e6e98dcb7" name="mobile-accounts-eapi-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="7b44167f-750e-4d72-9457-6b7066b83df6" actual="#[vars.httpStatus]" expected="501"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="mobile-accounts-eapi-suite-error-any" doc:id="0de2b915-5029-4685-9249-6a222fe93c99" expectedErrorType="APIKIT:ANY">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="864cb644-7d0f-4495-9b9e-00f4797eb0c8" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="mobile-accounts-eapi-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="b37ff4f9-e96c-473e-9268-0a899b96142b" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:ANY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="b4dbaaa0-48ed-48a2-ab10-90c495ef62f7" name="mobile-accounts-eapi-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="71d66c6a-b4fd-4e88-a2d7-9584721b6cc1" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\accounts\(accountid):mobile-accounts-eapi-config-test" doc:id="f56a8aec-f65a-4144-abbd-c0dc0ebe63c2" >
+		<munit:behavior >
+			<munit-tools:spy doc:name="Spy Flow Reference" doc:id="34c8c8b7-ef56-43d8-ace7-34689306aee5" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="c3259b33-97af-4fd4-8200-21c14646b2bd" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="47cf997b-c67e-4875-b5bb-830914269197" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import getaccountsaccountidmobileaccountseapiconfigtest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="04f7ed0d-dba5-4a66-b552-32817f3824da" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import getaccountsaccountidmobileaccountseapiconfigtest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="3d49fff9-9ba7-4801-a163-7d814c3e319c" >
+				<munit:payload value="#[readUrl('classpath://getaccountsaccountidmobileaccountseapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getaccountsaccountidmobileaccountseapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeadersMapName" value="#[readUrl('classpath://getaccountsaccountidmobileaccountseapiconfigtest\set-event_variable_.dwl')]" />
+					<munit:variable key="correlationId" value="#[output application/java --- readUrl('classpath://getaccountsaccountidmobileaccountseapiconfigtest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\accounts\(accountid):mobile-accounts-eapi-config" doc:id="7dae8ca8-e167-43b4-b410-3f2e23013253" name="get:\accounts\(accountid):mobile-accounts-eapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="6849cbb2-3871-4cad-9b5a-f8a51e99140a" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getaccountsaccountidmobileaccountseapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Flow Reference" doc:id="7ec49631-6251-4329-8dc3-a162f3908f3b" processor="flow-ref" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="c3259b33-97af-4fd4-8200-21c14646b2bd" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="delete:\accounts\(accountid):mobile-accounts-eapi-config-test" doc:id="1bcffe96-a26b-416d-b537-9450ae4cc074" >
+		<munit:behavior >
+			<munit-tools:spy doc:name="Spy Flow Reference" doc:id="585712d4-efeb-414f-830e-797ff93f36c0" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="c353e800-1d2b-4c71-8f46-da711bfd3891" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="278bea42-18ce-45af-a984-e6bf306ed48c" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import deleteaccountsaccountidmobileaccountseapiconfigtest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="de3a2fd5-cb33-4c28-b989-e45acb60ca8f" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import deleteaccountsaccountidmobileaccountseapiconfigtest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="5b27f505-3944-491b-bcdf-08213beaa1f0" >
+				<munit:payload value="#[readUrl('classpath://deleteaccountsaccountidmobileaccountseapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://deleteaccountsaccountidmobileaccountseapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeadersMapName" value="#[readUrl('classpath://deleteaccountsaccountidmobileaccountseapiconfigtest\set-event_variable_.dwl')]" />
+					<munit:variable key="correlationId" value="#[output application/java --- readUrl('classpath://deleteaccountsaccountidmobileaccountseapiconfigtest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to delete:\accounts\(accountid):mobile-accounts-eapi-config" doc:id="ffb5aed3-6955-4519-93cb-ca9e642839cf" name="delete:\accounts\(accountid):mobile-accounts-eapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="10d56dad-d8d8-4dab-8f62-10038e1513e1" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import deleteaccountsaccountidmobileaccountseapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Flow Reference" doc:id="520436f4-f524-4802-bf53-42b30639b49d" processor="flow-ref" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="c353e800-1d2b-4c71-8f46-da711bfd3891" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="post:\accounts:application\json:mobile-accounts-eapi-config-test" doc:id="fb0a8655-ff38-46e1-a8bc-8e40576dc814" >
+		<munit:behavior >
+			<munit-tools:spy doc:name="Spy Flow Reference" doc:id="ca42464d-520f-49aa-bea8-a942da61ff3b" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="3be18aaf-4abc-4a08-a4c5-6de2afedc2cb" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="21eb0e80-5d94-41bc-b082-6c5ac13ea455" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import postaccountsapplicationjsonmobileaccountseapiconfigtest::spy_assert_payload2
+---
+spy_assert_payload2::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="50f370ac-eef9-4145-bc66-8fe188f567df" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import postaccountsapplicationjsonmobileaccountseapiconfigtest::spy_assert_payload3
+---
+spy_assert_payload3::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="48d7c031-03db-44ab-9ea4-d7c312c0ac8d" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://postaccountsapplicationjsonmobileaccountseapiconfigtest\set-event_payload1.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://postaccountsapplicationjsonmobileaccountseapiconfigtest\set-event_attributes1.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeadersMapName" value="#[readUrl('classpath://postaccountsapplicationjsonmobileaccountseapiconfigtest\set-event_variable_2.dwl')]" />
+					<munit:variable key="correlationId" value="#[output application/java --- readUrl('classpath://postaccountsapplicationjsonmobileaccountseapiconfigtest\set-event_variable_3.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\accounts:application\json:mobile-accounts-eapi-config" doc:id="8952fef4-aaf2-4371-a235-62832dd91c2b" name="post:\accounts:application\json:mobile-accounts-eapi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="cad9e702-85f0-40e3-a193-8104d495abd4" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import postaccountsapplicationjsonmobileaccountseapiconfigtest::assert_expression_payload1
+---
+assert_expression_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Flow Reference" doc:id="b1de949d-19c7-463e-a942-8d4c2a7c2d3e" processor="flow-ref" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="3be18aaf-4abc-4a08-a4c5-6de2afedc2cb" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="mobile-accounts-eapi-main-test" doc:id="8036daf9-0e95-4164-9094-3059742f813e" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock APIkit Router" doc:id="71d87f6e-96a5-4dbd-967d-8db4cad359f2" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="b37ff4f9-e96c-473e-9268-0a899b96142b" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://mobileaccountseapimaintest\mock_payload.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://mobileaccountseapimaintest\mock_attributes.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeadersMapName" value="#[readUrl('classpath://mobileaccountseapimaintest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="httpStatus" value="#[readUrl('classpath://mobileaccountseapimaintest\mock_variable_1.dwl')]" />
+						<munit-tools:variable key="correlationId" value="#[output application/java --- readUrl('classpath://mobileaccountseapimaintest\mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="7957a9cb-6b18-442e-b98d-094259dd945f" >
+				<munit:payload value="#[readUrl('classpath://mobileaccountseapimaintest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://mobileaccountseapimaintest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to mobile-accounts-eapi-main" doc:id="ca3ac343-ee03-4f83-a94e-11b3a43aad23" name="mobile-accounts-eapi-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="52eed648-86f3-4c66-8803-2d3ba3783521" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import mobileaccountseapimaintest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

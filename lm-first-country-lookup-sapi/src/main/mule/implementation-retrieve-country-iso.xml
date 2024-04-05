@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="implementation-retrieve-country-isoFlow" doc:id="988c6ccc-27ce-4145-ab58-7811789c6326" >
+		<ee:transform doc:name="Transform Message" doc:id="b575923e-39fa-422e-931c-e573685c7442" >
+			<ee:variables >
+				<ee:set-variable variableName="isocode" ><![CDATA[attributes.uriParams.'isocode']]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<set-variable value="#[attributes.uriParams.isocode]" doc:name="Set Variable" doc:id="b396c529-983d-4023-aca8-00cf58bcb5b9" variableName="iso" />
+		<http:request method="${requester.method}" doc:name="Request" doc:id="658f154b-41ca-4f3d-a169-0c5a70383456" url="${requester.Url}" />
+		<ee:transform doc:name="Transform Message1" doc:id="9ff16ffd-5ec3-4e8d-a0a1-366a61e18dbf" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "country": payload.data[vars.iso].country,
+    "region": payload.data[vars.iso].region,
+    "iso": vars.iso
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<error-handler ref="lm-common-error-handlerError_Handler" />
+	</flow>
+</mule>

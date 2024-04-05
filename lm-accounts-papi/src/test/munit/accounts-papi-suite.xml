@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="accounts-papi-suite.xml" />
+	<munit:test name="accounts-papi-main-test" doc:id="ab27cc4b-1989-42e1-a7ef-6a39d3077686" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock APIkit Router" doc:id="c7440fdb-d54f-4115-a140-7f685551ea0d" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e7e6634d-979f-4f63-a948-cc6d63cacba0" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://accountspapimaintest\mock_payload.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://accountspapimaintest\mock_attributes.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://accountspapimaintest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="httpStatus" value="#[readUrl('classpath://accountspapimaintest\mock_variable_1.dwl')]" />
+						<munit-tools:variable key="Iso" value="#[output application/json --- readUrl('classpath://accountspapimaintest\mock_variable_2.dwl')]" mediaType="application/json" encoding="UTF-8" />
+						<munit-tools:variable key="success" value="#[output application/json --- readUrl('classpath://accountspapimaintest\mock_variable_3.dwl')]" mediaType="application/json" encoding="UTF-8" />
+						<munit-tools:variable key="correlationId" value="#[output application/java --- readUrl('classpath://accountspapimaintest\mock_variable_4.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="e00fa847-fdba-4109-8b47-5e9299f9cd7a" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://accountspapimaintest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://accountspapimaintest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to accounts-papi-main" doc:id="a342928e-1b6d-41de-b86b-f4063d1923f3" name="accounts-papi-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="dd16f99f-1b20-402f-a4bc-eaca15ac9a28" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import accountspapimaintest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="accounts-papi-console-test" doc:id="dc695ed7-3e52-43c2-b492-f7b1ec494fd2" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="228e2e11-6c74-4df3-9ad0-9f2feadb99f4" processor="http:listener">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="/console/*" attributeName="path" />
+					<munit-tools:with-attribute whereValue="accounts-papi-httpListenerConfig" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="4d688c75-7f73-4fb8-8ce2-713555e68c57" processor="apikit:console">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="accounts-papi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="fd67d7bc-4f41-4818-9e55-18b13f5b35b7" >
+				<munit:payload value="#[readUrl('classpath://accountspapiconsoletest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://accountspapiconsoletest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to accounts-papi-console" doc:id="6e6cb3e5-2f02-4359-9876-9b279e2d6ae4" name="accounts-papi-console"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="dcc3f2a3-2352-4f9c-9bc5-c8df725a1ef4" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import accountspapiconsoletest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="accounts-papi-suite-error-400" doc:id="28a58da2-d27f-4892-a0be-6589c14499f6" expectedErrorType="APIKIT:BAD_REQUEST">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="ad494cb2-7244-4b8f-8ae7-f0deb192ddcc" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="accounts-papi-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="e7e6634d-979f-4f63-a948-cc6d63cacba0" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:BAD_REQUEST" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="68c54faf-eaad-441d-96d1-5150794948b9" name="accounts-papi-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="9c8030a4-fc81-4459-aaa1-aa8dfe3d1b54" actual="#[vars.httpStatus]" expected="400"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="accounts-papi-suite-error-404" doc:id="7a918f09-0970-47a3-9f54-0f4024563e99" expectedErrorType="APIKIT:NOT_FOUND">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="5ed1ee88-dcfc-409b-a2d0-175780136bf5" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="accounts-papi-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="e7e6634d-979f-4f63-a948-cc6d63cacba0" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_FOUND" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="b28b8c0a-4211-495e-bc39-fc9c8c245a21" name="accounts-papi-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="a14f79e5-6be0-4a58-bd4a-b2a1d74d2050" actual="#[vars.httpStatus]" expected="404"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="accounts-papi-suite-error-405" doc:id="2078479c-4fd7-4f7b-9796-eb22d1357da4" expectedErrorType="APIKIT:METHOD_NOT_ALLOWED">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="d4c9290e-083c-4d54-9e68-6299a97f9429" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="accounts-papi-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="e7e6634d-979f-4f63-a948-cc6d63cacba0" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:METHOD_NOT_ALLOWED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="afc6a37f-a911-4545-9af6-49fb2fb66fb6" name="accounts-papi-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="30e711f5-51f1-40e3-991c-18df44a9dd22" actual="#[vars.httpStatus]" expected="405"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="accounts-papi-suite-error-406" doc:id="5f607240-5b4a-4e9a-b814-0f6a6252c4b7" expectedErrorType="APIKIT:NOT_ACCEPTABLE">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="eb65b7c5-1e8c-4887-8cbc-d2edb17f501c" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="accounts-papi-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="e7e6634d-979f-4f63-a948-cc6d63cacba0" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_ACCEPTABLE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="f020a457-252c-4cf8-a537-8eb237d2a514" name="accounts-papi-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="f654bfd4-bcbb-45be-8e73-d12eaef2d54c" actual="#[vars.httpStatus]" expected="406"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="accounts-papi-suite-error-415" doc:id="4cbb4570-5cc5-43d1-841b-76335f6fc7db" expectedErrorType="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="624d4d1a-4a5f-45ec-97fd-52570f946d14" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="accounts-papi-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="e7e6634d-979f-4f63-a948-cc6d63cacba0" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:UNSUPPORTED_MEDIA_TYPE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="c02d93f2-5a2e-4020-81dc-a61637743f0a" name="accounts-papi-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="d128a46d-4990-4b1b-a36f-a83e3c2f2bc2" actual="#[vars.httpStatus]" expected="415"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="accounts-papi-suite-error-501" doc:id="0cb9201f-b94b-4f85-961b-acfe8805c64c" expectedErrorType="APIKIT:NOT_IMPLEMENTED">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="8504ae8d-74f4-400a-8da5-a86df1a354d8" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="accounts-papi-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="e7e6634d-979f-4f63-a948-cc6d63cacba0" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_IMPLEMENTED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="d162efaf-cc28-497c-90cd-1f2b0ef1e494" name="accounts-papi-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="2cf5a143-ff3c-43ca-8dc4-598aee757df0" actual="#[vars.httpStatus]" expected="501"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="accounts-papi-suite-error-any" doc:id="e0b95ba6-2181-4ecf-9227-5e5fd947b1e4" expectedErrorType="APIKIT:ANY">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="0672a36f-94c2-4b21-944a-111ec6d1cae5" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="accounts-papi-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="e7e6634d-979f-4f63-a948-cc6d63cacba0" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:ANY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="1ec6f36b-231b-4a7d-8120-eb594384ba38" name="accounts-papi-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="d7f94143-fb46-4872-8287-b063ebad6fb9" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="put:\accounts\(accountid):application\json:accounts-papi-config-test" doc:id="7314f587-7f56-4646-b481-b89bba50bbfd" >
+		<munit:behavior >
+			<munit-tools:spy doc:name="Spy Flow Reference" doc:id="2f32512c-d3c0-4d83-9285-725fc05968f0" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="50a63e1d-a8d3-4568-a24e-fa0781d54f87" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="e76a6589-63f6-43d8-a9ed-adae7e27a9c3" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import putaccountsaccountidapplicationjsonaccountspapiconfigtest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="a7b092ca-8256-4e23-8dda-56431aeec89c" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import putaccountsaccountidapplicationjsonaccountspapiconfigtest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="edbbadca-c514-4589-b160-39c63ce6f5c7" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://putaccountsaccountidapplicationjsonaccountspapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://putaccountsaccountidapplicationjsonaccountspapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://putaccountsaccountidapplicationjsonaccountspapiconfigtest\set-event_variable_.dwl')]" />
+					<munit:variable key="correlationId" value="#[output application/java --- readUrl('classpath://putaccountsaccountidapplicationjsonaccountspapiconfigtest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to put:\accounts\(accountid):application\json:accounts-papi-config" doc:id="a03b9601-58ac-416a-a19e-e04e8256eeb1" name="put:\accounts\(accountid):application\json:accounts-papi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="6cbd244a-28be-4559-b438-6c66d1406139" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import putaccountsaccountidapplicationjsonaccountspapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Flow Reference" doc:id="4b3c50a3-691a-44d3-8948-94ddaca40f8f" processor="flow-ref" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="50a63e1d-a8d3-4568-a24e-fa0781d54f87" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="post:\accounts:application\json:accounts-papi-config-test" doc:id="ce9795de-3764-4e12-9455-02ed05de07f5" >
+		<munit:behavior >
+			<munit-tools:spy doc:name="Spy Flow Reference" doc:id="ee72e2a0-1bd0-495e-846d-6e1291abb5f1" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="d602879e-eb45-4717-8025-aa2dc89e3cb2" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="3146c103-f6af-438e-aed8-ada3282e7bbd" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import postaccountsapplicationjsonaccountspapiconfigtest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="eb7f2143-ea4e-4afa-8be3-a3f3edf4e5e9" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import postaccountsapplicationjsonaccountspapiconfigtest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="0d425124-3d01-44b8-a0db-9c05bed37dac" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://postaccountsapplicationjsonaccountspapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://postaccountsapplicationjsonaccountspapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postaccountsapplicationjsonaccountspapiconfigtest\set-event_variable_.dwl')]" />
+					<munit:variable key="correlationId" value="#[output application/java --- readUrl('classpath://postaccountsapplicationjsonaccountspapiconfigtest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\accounts:application\json:accounts-papi-config" doc:id="c575c99f-83c7-44c3-b33f-33ff07d2d804" name="post:\accounts:application\json:accounts-papi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="ef9995d2-4fe8-4a21-8db6-f0d8fda778c8" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import postaccountsapplicationjsonaccountspapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Flow Reference" doc:id="3c7ff281-1f67-49ee-a6e4-f0a9f7d25d49" processor="flow-ref" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="d602879e-eb45-4717-8025-aa2dc89e3cb2" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="implementation-update-accountsFlow" doc:id="6968f0ea-f219-47e8-ba00-908332f08e64" >
+		<http:request method="${requester.upsertmethod}" doc:name="PUT: /update-account" doc:id="853978ca-369d-4bab-9507-3307c1a2bc11" url="${requester.upsertUrl}">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_secret" : Mule::p('secure::requester.client_secret'),
+	"client_id" : Mule::p('secure::requester.client_id'),
+	"correlationId" :Mule::p('secure::requester.correlationId')
+}]]]></http:headers>
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"accountid": attributes.uriParams.accountid
+}]]]></http:uri-params>
+		</http:request>
+		<error-handler ref="lm-common-error-handlerError_Handler" />
+	</flow>
+</mule>

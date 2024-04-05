@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<flow name="implementation-update-accountsFlow" doc:id="b159ddcf-d750-415f-aaf9-889445c50bdb" >
+		<ee:transform doc:name="Transform Message" doc:id="d1ebd7a9-a187-4885-a3dc-eda76145942e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+[{
+	Id: attributes.uriParams.accountid,
+	Name: payload.name,
+	Phone: payload.phone,
+    Fax: payload.fax,
+    AccountNumber: payload.number,
+    Email__C : payload.email as String,
+	BillingStreet: payload.billingAddress.street,
+    BillingCity: payload.billingAddress.city,
+    BillingState: payload.billingAddress.state,
+    BillingPostalCode: payload.billingAddress.postalCode,
+    BillingCountry: payload.billingAddress.country,
+    ShippingStreet: payload.shippingAddress.street,
+    ShippingCity: payload.shippingAddress.city,
+    ShippingState: payload.shippingAddress.state,
+    ShippingCountry: payload.shippingAddress.country,
+    ShippingPostalcode: payload.shippingAddress.postalCode,
+}]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:upsert doc:name="Upsert" doc:id="1cbafbf7-1962-41b1-abdb-8b40e077214f" config-ref="Salesforce_Config" objectType="Account" externalIdFieldName="Id">
+		</salesforce:upsert>
+		<ee:transform doc:name="Transform Message" doc:id="81b1104f-db3a-4128-a75a-c1b158d93def" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  id: "0015j00000VNSljAAH",
+  status: 0,
+  message: "Account updated successfully"
+} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<error-handler ref="lm-common-error-handlerError_Handler" />
+	</flow>
+</mule>

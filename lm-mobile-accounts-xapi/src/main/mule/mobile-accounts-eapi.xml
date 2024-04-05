@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+    <flow name="mobile-accounts-eapi-main" doc:id="de73172a-e444-442c-b832-29695c0444e1">
+        <http:listener path="/api/*" config-ref="mobile-accounts-eapi-httpListenerConfig">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <set-variable value="#[attributes.headers.correlationId]" doc:name="Set Variable" doc:id="307c75a5-bdff-4f77-8dc3-f85f951f4041" variableName="correlationId"/>
+		<apikit:router config-ref="mobile-accounts-eapi-config" doc:id="b37ff4f9-e96c-473e-9268-0a899b96142b"/>
+		<error-handler ref="lm-common-error-handlerError_Handler" />
+    </flow>
+    <flow name="mobile-accounts-eapi-console">
+        <http:listener path="/console/*" config-ref="mobile-accounts-eapi-httpListenerConfig">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="mobile-accounts-eapi-config"/>
+		<error-handler ref="lm-common-error-handlerError_Handler" />
+    </flow>
+    <flow name="put:\accounts\(accountid):application\json:mobile-accounts-eapi-config">
+		<logger level="INFO" doc:name="Log" doc:id="e77cc365-2560-469c-8ff9-64675f994447" message="Flow started #[vars.correlationId]"/>
+		<flow-ref doc:name="Flow Reference" doc:id="fd65b20f-7a81-48f2-856b-d590716049a9" name="implementation-update-accountsFlow"/>
+    </flow>
+    <flow name="delete:\accounts\(accountid):mobile-accounts-eapi-config">
+		<logger level="INFO" doc:name="Log" doc:id="7097c3e2-a2fa-4334-867e-46d449496c6d" message="Flow started #[vars.correlationId]"/>
+		<flow-ref doc:name="Flow Reference" doc:id="c353e800-1d2b-4c71-8f46-da711bfd3891" name="implementation-delete-accountsFlow"/>
+    </flow>
+    <flow name="get:\accounts\(accountid):mobile-accounts-eapi-config">
+		<logger level="INFO" doc:name="Log" doc:id="ce04d252-ab7f-4766-ac70-4960459ba6d7" message="flow started #[vars.correlationId]"/>
+		<flow-ref doc:name="Flow Reference" doc:id="c3259b33-97af-4fd4-8200-21c14646b2bd" name="implementation-retrieve-accountsFlow"/>
+    </flow>
+    <flow name="post:\accounts:application\json:mobile-accounts-eapi-config">
+		<logger level="INFO" doc:name="Log" doc:id="e89789d9-42d0-4471-945d-18a754351a9c" message="Flow started #[vars.correlationId]"/>
+		<flow-ref doc:name="Flow Reference" doc:id="3be18aaf-4abc-4a08-a4c5-6de2afedc2cb" name="implementation-create-accountsFlow"/>
+    </flow>
+</mule>

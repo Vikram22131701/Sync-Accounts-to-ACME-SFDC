@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="implementation-update-accountsFlow" doc:id="c637a25e-92ce-4697-85e7-2d0281e0f761" >
+		<set-variable value="#[payload.shippingAddress.countryIso]" doc:name="Set Variable" doc:id="1cc969a1-5287-4823-842b-a5b168084850" variableName="Iso"/>
+		<http:request method="${requester-country.method}" doc:name="Request" doc:id="dccca443-d189-4406-aca9-ff4bb393e0bd" url="${requester-country.Url}" target="success">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"correlationId" : Mule::p('secure::requester-sfdc.correlationId'),
+	"client_secret" : Mule::p('secure::requester-sfdc.client_secret'),
+	"client_id" : Mule::p('secure::requester-sfdc.client_id')
+}]]]></http:headers>
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"isocode" : vars.Iso
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message1" doc:id="aa289a0b-d509-4b98-8fa8-d2b0204aa765">
+			<ee:variables>
+				<ee:set-variable variableName="accountid"><![CDATA[attributes.uriParams.'accountid']]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Transform Message" doc:id="828ced0b-d8e7-4c34-bb4f-a32810975704">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	name: payload.name,
+	phone: payload.phone,
+	fax: payload.fax,
+	number: payload.number,
+	email: payload.email,
+	billingAddress:{
+			street: payload.billingAddress.street,
+			city: payload.billingAddress.city,
+			state: payload.billingAddress.state,
+			postalCode: payload.billingAddress.postalCode,
+			country: vars.success.country	
+	        },
+shippingAddress:{
+   		street: payload.shippingAddress.street,
+		city: payload.shippingAddress.city,
+		state: payload.shippingAddress.state,
+		postalCode: payload.shippingAddress.postalCode,
+		country: vars.success.country
+   }
+
+
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="${requester-sfdc.upsertmethod}" doc:name="Request" doc:id="c97df623-fb2a-4648-b2a4-d0df34b966e3" url="${requester-sfdc.upsertUrl}">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"correlationId" : Mule::p('secure::requester-sfdc.correlationId'),
+	"client_secret" : Mule::p('secure::requester-sfdc.client_secret'),
+	"client_id" : Mule::p('secure::requester-sfdc.client_id')
+}]]]></http:headers>
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"accountid" : attributes.uriParams.accountid
+}]]]></http:uri-params>
+		</http:request>
+		<error-handler ref="lm-common-error-handlerError_Handler" />
+	</flow>
+</mule>

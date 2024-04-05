@@ -1,0 +1,16 @@
+https:
+ host: "0.0.0.0"
+ port: "8082"
+ timeout: "60000"
+ path: "/api/*"
+ 
+requester:
+ method: "GET"
+ Url: "https://api.first.org/data/v1/countries"
+ 
+keystore:
+ keypassword: "![j7gXtYZIoPpKZtPSO04v9A==]"
+ password: "![j7gXtYZIoPpKZtPSO04v9A==]"
+ path: "keystoretls.jks"
+ type: "JKS"
+ 

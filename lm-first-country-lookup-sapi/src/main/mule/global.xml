@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+	<http:listener-config name="first-country-lookup-sapi-httpListenerConfig" doc:name="HTTP Listener config" doc:id="089c6be0-5665-463a-82c9-846ef21915ff" >
+		<http:listener-connection host="${https.host}" port="${https.port}" protocol="HTTPS" readTimeout="${https.timeout}" tlsContext="TLS_Context"/>
+	</http:listener-config>
+	<apikit:config outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" doc:name="Router" doc:id="55afa274-4953-4848-b41d-6e5329581f86" name="first-country-lookup-sapi-config" api="resource::718e059a-07f5-4886-8fd6-3d78c3764524:lm-first-country-lookup-sapi:1.0.0:raml:zip:first-country-lookup-sapi.raml" />
+	<api-gateway:autodiscovery apiId="19384018" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="7d7dabfc-abd1-42de-bcd1-0c3502b4975f" flowRef="first-country-lookup-sapi-main" />
+	<import doc:name="Import" doc:id="8f9a4d44-6159-4e20-9ed2-5a357e530153" file="lm-common-error-handler.xml" />
+	<configuration-properties doc:name="Configuration properties" doc:id="a4a74e2b-27ad-4f81-8173-4f564f9bdc04" file="configs\common.yaml" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="deda795e-c84b-4ae4-95c8-09a3da8cf89d" file="configs/common.yaml" key="TrainingMule@123" />
+	<tls:context name="TLS_Context" doc:name="TLS Context" doc:id="6db60ec7-6d6a-4f99-ba6c-d960bdc161c7" >
+		<tls:key-store type="${keystore.type}" path="${keystore.path}" keyPassword="${secure::keystore.keypassword}" password="${secure::keystore.password}" />
+	</tls:context>
+</mule>

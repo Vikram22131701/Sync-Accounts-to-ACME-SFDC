@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+	<http:listener-config name="mobile-accounts-eapi-httpListenerConfig" doc:name="HTTP Listener config" doc:id="6085abfe-b85d-41fb-ab00-908be9105c44" >
+		<http:listener-connection host="${https.host}" port="${https.port}" protocol="HTTPS" readTimeout="${https.timeout}" tlsContext="TLS_Context"/>
+	</http:listener-config>
+	<apikit:config outboundHeadersMapName="outboundHeadersMapName" httpStatusVarName="httpStatus" doc:name="Router" doc:id="599556fb-eb9c-4325-b9fb-c29eef3746b0" name="mobile-accounts-eapi-config" api="resource::718e059a-07f5-4886-8fd6-3d78c3764524:lm-mobile-accounts-eapi:1.0.0:raml:zip:mobile-accounts-eapi.raml" />
+	<api-gateway:autodiscovery apiId="19383899" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="4e4a712f-a9aa-4341-be59-d608994fa1e4" flowRef="mobile-accounts-eapi-main" />
+	<import doc:name="Import" doc:id="5f32c740-0fc8-4868-8a51-acf583ce9912" file="lm-common-error-handler.xml" />
+	<configuration-properties doc:name="Configuration properties" doc:id="1c7eda66-5af6-4c91-ac47-6907c6e3544d" file="configs\common.yaml" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="b88ba988-bbb9-491d-8b28-e41f3aa7c368" file="configs/common.yaml" key="TrainingMule@123" />
+	<tls:context name="TLS_Context" doc:name="TLS Context" doc:id="208bb260-0e68-45ec-a8f0-586d9342de61" >
+		<tls:key-store type="${keystore.type}" path="${keystore.path}" keyPassword="${secure::keystore.keypassword}" password="${secure::keystore.password}" />
+	</tls:context>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="5ca50b18-5d33-42fc-966f-781c05fa31b9" >
+		<http:request-connection protocol="HTTPS" host="${https.host}" port="${https.port}" connectionIdleTimeout="${https.timeout}" >
+			<tls:context >
+				<tls:trust-store path="${trustStore.path}" password="${secure::trustStore.password}" type="${trustStore.type}" />
+			</tls:context>
+		</http:request-connection>
+	</http:request-config>
+</mule>

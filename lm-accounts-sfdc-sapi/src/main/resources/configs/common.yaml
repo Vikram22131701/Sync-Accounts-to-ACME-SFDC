@@ -1,0 +1,21 @@
+https:
+  host: "0.0.0.0"
+  port: "8082"
+  timeout: "30000"
+  path: "/api/*"
+  
+
+#salesforce-configuration:
+sfdc:
+ username: vikram_2110@gmail.com
+ password: Vikram@22131701
+ securityToken: zMX9ukI0reqFluwTj3DyDDO3
+ Url: https://login.salesforce.com/services/Soap/u/56.0
+ 
+keystore:
+ keypassword: "![j7gXtYZIoPpKZtPSO04v9A==]"
+ password: "![j7gXtYZIoPpKZtPSO04v9A==]"
+ path: "keystoretls.jks"
+ type: "JKS"
+
+    

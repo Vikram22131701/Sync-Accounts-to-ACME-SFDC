@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+    <flow name="accounts-papi-main" doc:id="dfa42f1f-6b65-40d4-ba3f-53bc2dece827">
+        <http:listener path="/api/*" config-ref="accounts-papi-httpListenerConfig">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <set-variable value="#[attributes.headers.correlationId]" doc:name="Set Variable" doc:id="a3882cd8-6e27-4813-ba93-3afb103cb0e7" variableName="correlationId"/>
+		<apikit:router config-ref="accounts-papi-config" doc:id="e7e6634d-979f-4f63-a948-cc6d63cacba0"/>
+		<error-handler ref="lm-common-error-handlerError_Handler" />
+    </flow>
+    <flow name="accounts-papi-console">
+        <http:listener path="/console/*" config-ref="accounts-papi-httpListenerConfig">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="accounts-papi-config"/>
+		<error-handler ref="lm-common-error-handlerError_Handler" />
+    </flow>
+    <flow name="put:\accounts\(accountid):application\json:accounts-papi-config">
+        <logger level="INFO" doc:name="Log" doc:id="e4d26cec-e1e8-4caa-8380-9f6e457d7d38" message="flow started #[vars.correlationId]"/>
+		<flow-ref doc:name="Flow Reference" doc:id="50a63e1d-a8d3-4568-a24e-fa0781d54f87" name="implementation-update-accountsFlow"/>
+    </flow>
+    <flow name="post:\accounts:application\json:accounts-papi-config">
+		<logger level="INFO" doc:name="Logger" doc:id="0628df0f-df32-44b2-a978-35b6b5f884ef" message="Flow starts"/>
+		<flow-ref doc:name="Flow Reference" doc:id="d602879e-eb45-4717-8025-aa2dc89e3cb2" name="implementation-create-accountsFlow"/>
+    </flow>
+</mule>

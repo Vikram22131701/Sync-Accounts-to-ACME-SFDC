@@ -1,0 +1,29 @@
+https:
+  host: "0.0.0.0"
+  port: "8082"
+  timeout: "60000"
+  path: "/api/*"
+ 
+requester-sfdc:
+ client_id: "![UyLV2ZUqTx/j+8r2dLaPCktT66shqCiXMUUqL05FddhQMofM30fa3CIjPBW9ozhs]"
+ client_secert: "![JW9Tj+IZpI6O+LWfN1bzr654pLE2ZG3CdUjesz7okeKDwAdfTnT8IhgQAeKcJKVF]"
+ correlationId: "![I7fqbwsQMMG7l9dy607vZBHkK0SUhU7BO4yezcYbQBJMCp1qD0iaEHd7UWrVPLvb]"
+ createmethod: "POST"
+ createUrl: "https://lm-accounts-sfdc-sapi.us-e2.cloudhub.io/api/accounts"
+ upsertmethod: "PUT"
+ upsertUrl: "https://lm-accounts-sfdc-sapi.us-e2.cloudhub.io/api/accounts/{accountid}"
+ 
+requester-country:
+  method: "GET"
+  Url: "https://lm-frist-countries-lookup-sapi.us-e2.cloudhub.io/api/countries/{isocode}"
+  
+keystore:
+ keypassword: "![j7gXtYZIoPpKZtPSO04v9A==]"
+ password: "![j7gXtYZIoPpKZtPSO04v9A==]"
+ path: "keystoretls.jks"
+ type: "JKS"
+ 
+trustStore:
+ type: "JKS"
+ path: "truststore_tls1.jks"
+ password: "![PKz15A4kGBl9oxIgTgGkqg==]"

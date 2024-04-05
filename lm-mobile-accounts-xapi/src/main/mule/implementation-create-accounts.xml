@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="implementation-create-accountsFlow" doc:id="fc56acbd-2f41-48b3-8c40-a53491b7b498" >
+		<http:request method="${requester.createmethod}" doc:name="POST: /create-accounts" doc:id="345bd1be-9911-452e-a4c5-1e14c4fe29a5" url="${requester.createUrl}">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_secret" : Mule::p('secure::requester.client_secret'),
+	"client_id" : Mule::p('secure::requester.client_id'),
+	"correlationId" :Mule::p('secure::requester.correlationId')
+}]]]></http:headers>
+		</http:request>
+		<error-handler ref="lm-common-error-handlerError_Handler" />
+	</flow>
+</mule>

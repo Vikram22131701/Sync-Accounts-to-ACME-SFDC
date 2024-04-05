@@ -1,0 +1,28 @@
+%dw 2.0
+
+type auto_8dbaf54d_34dc_43f7_9489_534750277dc6_Output_Payload = {|
+  number?: String, 
+  phone?: String, 
+  name?: String, 
+  shippingAddress?: {|
+    country?: String, 
+    city?: String, 
+    countryIso?: String, 
+    street?: String, 
+    postalCode?: String, 
+    state?: String
+  |} {"description": "Shipping address details",
+  "label": "Shipping Account Address"}, 
+  billingAddress?: {|
+    country?: String, 
+    city?: String, 
+    countryIso?: String, 
+    street?: String, 
+    postalCode?: String, 
+    state?: String
+  |} {"description": "Billing address details",
+  "label": "Billing Account Address"}, 
+  fax?: String, 
+  email?: String
+|} {"description": "represents the address type"}
+

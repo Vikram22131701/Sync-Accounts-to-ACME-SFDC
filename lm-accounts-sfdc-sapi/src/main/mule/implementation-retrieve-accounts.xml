@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="implementation-retrieve-accountsFlow" doc:id="6a2c72de-8efa-4dbe-8659-aa354ed9aa89" >
+		<set-variable value="#[attributes.uriParams.accountid]" doc:name="Set Variable" doc:id="b3dc8692-fdd4-41cc-b888-ba824bb37f28" variableName="AccountID"/>
+		<salesforce:query doc:name="Query" doc:id="049e33f0-43c0-4606-8bdc-8d2abcc99be5" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query ><![CDATA[SELECT 
+    Name, 
+    Email__c, 
+    AccountNumber, 
+    Phone, 
+    Fax, 
+    BillingStreet, 
+    BillingCity, 
+    BillingState, 
+    BillingPostalCode, 
+    BillingCountry, 
+    ShippingStreet, 
+    ShippingCity, 
+    ShippingState, 
+    ShippingPostalCode, 
+    ShippingCountry
+FROM 
+    Account
+WHERE 
+    Id =':Id']]></salesforce:salesforce-query>
+			<salesforce:parameters ><![CDATA[#[output application/java
+---
+{
+	"Id" : vars.accountid
+}]]]></salesforce:parameters>
+		</salesforce:query>
+		<ee:transform doc:name="Transform Message" doc:id="bf2d2834-9612-41c9-b58c-6a69dbfd2d91" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<error-handler ref="lm-common-error-handlerError_Handler" />
+	</flow>
+</mule>

@@ -1,0 +1,26 @@
+%dw 2.0
+
+type auto_92ac3394_70c2_421f_b7fb_318d051b69f9_Output_Attributes = {|
+  clientCertificate?: {|
+    publicKey?: {|  |}, 
+    "type"?: String, 
+    encoded?: Binary
+  |}, 
+  headers: {|
+    correlationId: String, 
+    channel?: String
+  |}, 
+  listenerPath: String, 
+  method: String, 
+  queryParams: {|  |}, 
+  queryString: String, 
+  relativePath: String, 
+  remoteAddress: String, 
+  requestPath: String, 
+  requestUri: String, 
+  scheme: String, 
+  uriParams: {| accountid: String |}, 
+  version: String, 
+  localAddress: String
+|}
+

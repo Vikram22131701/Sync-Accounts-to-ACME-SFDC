@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:commerce-cloud-dataapi="http://www.mulesoft.org/schema/mule/commerce-cloud-dataapi" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+http://www.mulesoft.org/schema/mule/commerce-cloud-dataapi http://www.mulesoft.org/schema/mule/commerce-cloud-dataapi/current/mule-commerce-cloud-dataapi.xsd">
+    <flow name="accounts-sfdc-sapi-main" doc:id="d02c1500-27cb-43f3-818d-04f1d41046cd">
+        <http:listener path="/api/*" config-ref="accounts-sfdc-sapi-httpListenerConfig">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <set-variable value='#[attributes.headers.correlationId]' doc:name="Set Variable" doc:id="5281590d-0b66-4ecc-a709-1a0113580e70" variableName="correlationId"/>
+		<apikit:router config-ref="accounts-sfdc-sapi-config" doc:id="6f973cf7-6158-494a-bfbd-655c84e949e4"/>
+		<error-handler ref="lm-common-error-handlerError_Handler" />
+    </flow>
+    <flow name="accounts-sfdc-sapi-console">
+        <http:listener path="/console/*" config-ref="accounts-sfdc-sapi-httpListenerConfig">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="accounts-sfdc-sapi-config"/>
+		<error-handler ref="lm-common-error-handlerError_Handler" />
+    </flow>
+    <flow name="put:\accounts\(accountid):application\json:accounts-sfdc-sapi-config">
+		<logger level="INFO" doc:name="Log" doc:id="b30a0bc4-e34e-4d2f-abd0-e91e19b9d0d8" message="Flow started #[vars.correlationId]"/>
+		<flow-ref doc:name="Flow Reference" doc:id="6f33305f-7da3-4062-bcf8-3930cd497aae" name="implementation-update-accountsFlow"/>
+    </flow>
+    <flow name="delete:\accounts\(accountid):accounts-sfdc-sapi-config">
+        <logger level="INFO" doc:name="Log" doc:id="52830a02-3b84-427f-9374-c0be39b45f79" message="flow started #[vars.correlationId]"/>
+		<flow-ref doc:name="Flow Reference" doc:id="49f85bdd-bb4a-426b-afe1-966307f141d8" name="implementation-delete-accountsFlow"/>
+    </flow>
+    <flow name="get:\accounts\(accountid):accounts-sfdc-sapi-config">
+		<logger level="INFO" doc:name="Log" doc:id="732801d6-63ae-486a-971c-222b569a6f05" message="Flow started #[vars.correlationId]"/>
+		<flow-ref doc:name="Flow Reference" doc:id="64f72ba6-fa31-4979-8f7d-4679ddb28bb3" name="implementation-retrieve-accountsFlow"/>
+    </flow>
+	<flow name="post:\accounts:application\json:accounts-sfdc-sapi-config">
+		<logger level="INFO" doc:name="Log" doc:id="490ec2d6-65ef-4560-a387-44b8a061ca47" message="Flow started #[vars.correlationId]"/>
+		<flow-ref doc:name="Flow Reference" doc:id="667dd6dd-5dd2-4a28-8032-fb7a354c0be5" name="implementation-create-accountsFlow"/>
+    </flow>
+</mule>

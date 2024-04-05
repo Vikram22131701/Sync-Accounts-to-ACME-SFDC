@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_c68cfac1_381d_4582_986e_e01cba549fee_Output_Payload = Array<{|  country?: String,   iso?: String,   region?: String|} {"description": "represents the items"}>
+

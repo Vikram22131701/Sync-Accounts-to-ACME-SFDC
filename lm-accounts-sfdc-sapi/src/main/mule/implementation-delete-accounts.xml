@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<flow name="implementation-delete-accountsFlow" doc:id="aa185bac-dc7f-4bfa-82c5-e545c8b779f5" >
+		<ee:transform doc:name="Transform Message" doc:id="b8bcdf69-e62f-4399-b75b-225988afe126" >
+			<ee:variables >
+				<ee:set-variable variableName="accountid" ><![CDATA[attributes.uriParams.'accountid']]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<salesforce:delete doc:name="Delete" doc:id="d42f548b-75f3-45f4-b472-3ba98d12c72c" config-ref="Salesforce_Config">
+			<salesforce:ids ><![CDATA[#[[attributes.uriParams.'accountid']]]]></salesforce:ids>
+		</salesforce:delete>
+		<ee:transform doc:name="Transform Message" doc:id="0685eb29-4ca6-4df9-a869-0ca34ab4a6d6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  id: "0015j00000VNSljAAH",
+  status: 0,
+  message: "Account deleted successfully"
+} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<error-handler ref="lm-common-error-handlerError_Handler" />
+	</flow>
+</mule>

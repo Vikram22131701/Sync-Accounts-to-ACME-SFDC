@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="implementation-create-accountsFlow" doc:id="5cc3968c-b2d9-4216-8405-15216f4936d6" >
+		<ee:transform doc:name="Transform Message" doc:id="4e4be09c-7c87-4c8b-94a6-163ed5fc6416" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+[{
+	Name: payload.name,
+	Phone: payload.phone,
+    Fax: payload.fax,
+    AccountNumber: payload.number,
+    Email__C : payload.email as String,
+	BillingStreet: payload.billingAddress.street,
+    BillingCity: payload.billingAddress.city,
+    BillingState: payload.billingAddress.state,
+    BillingPostalCode: payload.billingAddress.postalCode,
+    BillingCountry: payload.billingAddress.country,
+    ShippingStreet: payload.shippingAddress.street,
+    ShippingCity: payload.shippingAddress.city,
+    ShippingState: payload.shippingAddress.state,
+    ShippingCountry: payload.shippingAddress.country,
+    ShippingPostalcode: payload.shippingAddress.postalCode,
+}]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:create type="Account" doc:name="Create" doc:id="4b90a0b0-2d0a-46ae-8a86-6fc1014f09a9" config-ref="Salesforce_Config"/>
+		<ee:transform doc:name="Transform Message" doc:id="69b5ebb2-f422-4514-ac6c-0aa27e8180b0" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<error-handler ref="lm-common-error-handlerError_Handler" />
+	</flow>
+</mule>
